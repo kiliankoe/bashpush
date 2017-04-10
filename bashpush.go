@@ -86,7 +86,7 @@ func sendiOSNotifications(id, quote string) {
 	}
 
 	devicesStr := os.Getenv("IOS_PUSH_TOKENS")
-	devices := strings.Split(devicesStr, ",")
+	devices := strings.Split(devicesStr, "\n")
 
 	client := apns2.NewClient(cert).Development()
 
