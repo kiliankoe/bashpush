@@ -1,7 +1,7 @@
 env.sh
-run.sh
 deploy.sh
 bashfsrPush.*
 lastquote.txt
 bashpush.rb
 bashpush
+run-bashpush.sh
