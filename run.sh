@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
 while :
 do
-    ./bashpush
+    /bashpush/bashpush
     sleep 300
 done
