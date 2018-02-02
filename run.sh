@@ -3,5 +3,5 @@
 while :
 do
     ./bashpush
-    sleep 60
+    sleep 300
 done
