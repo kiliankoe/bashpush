@@ -128,7 +128,10 @@ func sendSlackNotification(id, link string) {
 	jsonPayload, _ := json.Marshal(payload)
 
 	req, _ := http.NewRequest("POST", slackHookURL, bytes.NewBufferString(string(jsonPayload)))
-	resp, _ := hc.Do(req)
+	resp, err := hc.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if resp.StatusCode != 200 {
 		log.Fatal("Post to Slack failed /o\\")
 	} else {
