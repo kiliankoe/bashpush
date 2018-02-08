@@ -5,7 +5,7 @@ WORKDIR /bashpush
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY bashpush.py .
 COPY run.sh .
+COPY bashpush.py .
 
 CMD ["./run.sh"]
