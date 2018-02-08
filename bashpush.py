@@ -8,19 +8,17 @@ import requests
 import feedparser
 from pushover_complete import PushoverAPI
 
-def env(var:str):
-    """
-    Read value from environment and exit if it doesn't exist.
-    """
+
+def env(var: str) -> str:
+    """Read value from environment and exit if it doesn't exist."""
     val = os.getenv(var)
     if val is None:
         exit(f'missing env var {var}')
     return val
 
-def fetchLatest():
-    """
-    Fetch the newest quote from the RSS feed.
-    """
+
+def fetchLatest() -> dict:
+    """Fetch the newest quote from the RSS feed."""
     bash_url = env('BASH_FEED_URL')
     feed = requests.get(bash_url)
     # feedparser can't deal with the bash url directly 🙄
@@ -31,11 +29,10 @@ def fetchLatest():
         'id': int(re.findall(r'\?(\d+)', latest['link'])[0])
     }
 
-def isNew(new_id:int):
-    """
-    Check if the given quote id is newer than the last known one.
-    If it is, it's persisted to `lastquote.txt`.
-    """
+
+def isNew(new_id: int) -> bool:
+    """Check if the given quote id is newer than the last known one.
+    If it is, it's persisted to `lastquote.txt`."""
     if not os.path.exists('lastquote.txt'):
         open('lastquote.txt', 'a').close()
 
@@ -50,11 +47,13 @@ def isNew(new_id:int):
         else:
             return False
 
+
 def sendPushoverNotifications(latest):
     users = env('PUSHOVER_USER_TOKENS').split(',')
     p = PushoverAPI(env('PUSHOVER_API_TOKEN'))
     for user in users:
         p.send_message(user, latest['quote'], url=latest['url'])
+
 
 def sendSlackNotifcation(latest):
     slack_url = env('SLACK_HOOK_URL')
@@ -63,6 +62,7 @@ def sendSlackNotifcation(latest):
     r = requests.post(slack_url, data=quote_json)
     if r.status_code is not 200:
         exit(f'Post to Slack failed for {latest["id"]} /o\\\n{r.text}')
+
 
 if __name__ == '__main__':
     latest = fetchLatest()
