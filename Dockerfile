@@ -1,18 +1,11 @@
-FROM golang:1.9-alpine as build
+FROM python:3.6-slim
 
-COPY bashpush.go .
+WORKDIR /bashpush
 
-RUN apk update && apk add git
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-RUN go get github.com/SlyMarbo/rss && \
-    go get github.com/sideshow/apns2 && \
-    go build bashpush.go
+COPY bashpush.py .
+COPY run.sh .
 
-FROM alpine:3.6
-
-RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
-
-COPY --from=build /go/bashpush /bashpush/
-COPY run.sh /bashpush/
-
-CMD ["/bashpush/run.sh"]
+CMD ["./run.sh"]

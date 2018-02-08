@@ -2,6 +2,6 @@
 
 while :
 do
-    /bashpush/bashpush
+    /bashpush/bashpush.py
     sleep 300
 done
