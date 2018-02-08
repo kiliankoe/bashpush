@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import os
-from sys import exit
+from sys import exit, stderr
 import re
 import json
 import requests
@@ -67,7 +67,8 @@ def sendSlackNotifcation(latest: dict):
     quote_json = json.dumps({'text': quote_str})
     r = requests.post(slack_url, data=quote_json)
     if r.status_code is not 200:
-        exit(f'Post to Slack failed for {latest["id"]} /o\\\n{r.text}')
+        print(f'Post to Slack failed for {latest["id"]} /o\\\n{r.text}',
+              file=stderr)
 
 
 if __name__ == '__main__':
