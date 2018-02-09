@@ -7,10 +7,8 @@ import json
 import requests
 import feedparser
 from pushover_complete import PushoverAPI
-import enforce
 
 
-@enforce.runtime_validation
 def env(var: str) -> str:
     """Read value from environment and exit if it doesn't exist."""
     val = os.getenv(var)
@@ -19,8 +17,7 @@ def env(var: str) -> str:
     return val
 
 
-@enforce.runtime_validation
-def fetchLatest() -> dict:
+def fetch_latest() -> dict:
     """Fetch the newest quote from the RSS feed."""
     bash_url = env('BASH_FEED_URL')
     feed = requests.get(bash_url)
@@ -33,8 +30,7 @@ def fetchLatest() -> dict:
     }
 
 
-@enforce.runtime_validation
-def isNew(new_id: int) -> bool:
+def is_new(new_id: int) -> bool:
     """Check if the given quote id is newer than the last known one.
     If it is, it's persisted to `lastquote.txt`."""
     if not os.path.exists('lastquote.txt'):
@@ -52,16 +48,14 @@ def isNew(new_id: int) -> bool:
             return False
 
 
-@enforce.runtime_validation
-def sendPushoverNotifications(latest: dict):
+def send_pushover_notifications(latest: dict):
     users = env('PUSHOVER_USER_TOKENS').split(',')
     p = PushoverAPI(env('PUSHOVER_API_TOKEN'))
     for user in users:
         p.send_message(user, latest['quote'], url=latest['url'])
 
 
-@enforce.runtime_validation
-def sendSlackNotifcation(latest: dict):
+def send_slack_notification(latest: dict):
     slack_url = env('SLACK_HOOK_URL')
     quote_str = f'Neues Bash Zitat 👉 <{latest["url"]}|{latest["id"]}> 🤐'
     quote_json = json.dumps({'text': quote_str})
@@ -72,7 +66,7 @@ def sendSlackNotifcation(latest: dict):
 
 
 if __name__ == '__main__':
-    latest = fetchLatest()
-    if isNew(latest['id']):
-        sendSlackNotifcation(latest)
-        sendPushoverNotifications(latest)
+    latest = fetch_latest()
+    if is_new(latest['id']):
+        send_slack_notification(latest)
+        send_pushover_notifications(latest)
